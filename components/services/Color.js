@@ -1,0 +1,1 @@
+export const Springgreen = `#00CD66`;
