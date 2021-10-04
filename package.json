@@ -12,10 +12,14 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@ant-design/icons-react-native": "^2.3.1",
+    "@react-navigation/native": "^6.0.4",
+    "@react-navigation/native-stack": "^6.2.2",
     "firebase": "^9.1.1",
     "react": "17.0.2",
     "react-icons": "^4.3.0",
     "react-native": "0.65.1",
+    "react-native-safe-area-context": "^3.3.2",
+    "react-native-screens": "^3.8.0",
     "react-native-vector-icons": "^8.1.0"
   },
   "devDependencies": {

@@ -3,7 +3,7 @@ import {View, Text, TextInput, Button} from 'react-native';
 import {Springgreen} from '../services/Color';
 import firebase, {auth} from './../database/Firebase';
 // rr
-function Login() {
+function Login({navigation, SetLog}) {
   // r
   const initialState = {
     email: '',
@@ -13,13 +13,22 @@ function Login() {
   function handleChange(name, value) {
     setLogin({...login, [name]: value});
   }
-  function handleSubmit() {
+  async function handleSubmit() {
     console.log(login);
-    const ref = firebase
-      .auth()
-      .signInWithEmailAndPassword(login.email, login.password);
-    console.log('signed IN');
-    console.log(ref);
+    try {
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(login.email, login.password);
+      SetLog(login.email);
+    } catch (error) {
+      console.log(error);
+      alert('not a valid credential');
+    }
+
+    // console.log(ref);
+  }
+  function navigateSignUp() {
+    navigation.navigate('SignUp');
   }
   return (
     <View
@@ -46,11 +55,19 @@ function Login() {
         style={{
           borderWidth: 2,
           marginTop: 10,
+          marginBottom: 20,
           width: '60%',
           borderColor: Springgreen,
           borderRadius: 10,
         }}></TextInput>
-      <Button title="login" onPress={handleSubmit} />
+      <View style={{width: '60%'}}>
+        <Button color={Springgreen} title="login" onPress={handleSubmit} />
+      </View>
+
+      <View style={{flexDirection: 'row', margin: 10}}>
+        <Text style={{marginTop: 10}}>Create New Account?</Text>
+        <Button title="SignUp" onPress={navigateSignUp} />
+      </View>
     </View>
   );
 }

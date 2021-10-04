@@ -1,5 +1,12 @@
-import React, {useEffect} from 'react';
-import {Button, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Button,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Modal,
+} from 'react-native';
 import {Springgreen} from '../services/Color';
 import firebase, {database} from './../database/Firebase';
 import {IconFill, IconOutline} from '@ant-design/icons-react-native';
@@ -8,6 +15,8 @@ import {IconFill, IconOutline} from '@ant-design/icons-react-native';
 // import { Firestore } from 'firebase/firestore';
 
 function ChatScreen() {
+  const [modalVisible, setModalVisible] = useState(false);
+
   useEffect(async () => {
     // const ref = firebase.database().ref('user');
     // ref.push({
@@ -33,8 +42,15 @@ function ChatScreen() {
   }, []);
   return (
     <View style={{flex: 1}}>
-      <View style={{flex: 1, backgroundColor: Springgreen}}>
-        
+      
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: Springgreen,
+          margin: 10,
+        }}>
+        <Button title="green" color="black" />
+       
       </View>
       <View style={{flex: 6, backgroundColor: 'white'}}></View>
       <View

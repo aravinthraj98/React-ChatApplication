@@ -30,13 +30,15 @@ import Conversation from './components/Screens/Conversation';
 import Login from './components/Screens/Login';
 import firebase, {auth} from './components/database/Firebase';
 import SignUp from './components/Screens/SignUp';
+import StackNavigator from './components/navigations/StackNavigator';
 
 const App = () => {
   return (
     // <ChatScreen />
     // <Conversation />
-    <Login />
+    // <Login />
     // <SignUp />
+    <StackNavigator />
   );
 };
 
