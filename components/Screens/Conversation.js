@@ -12,10 +12,67 @@ import {Springgreen} from '../services/Color';
 const db = firebase.database();
 function Conversation() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [chatDetail, setChatDetail] = useState([]);
+  const [email, setEmail] = useState('');
   useEffect(async () => {
-    await db.ref('user/aravinth799902@gmail.com').push({name: 'aravinth'});
-    console.log('created');
+    // await db.ref('user').child('aravinth98').push({name: 'aravinth'});
+    // console.log('created');
+    if (chatDetail == null || chatDetail.length == 0) {
+      const getDetail = await db.ref('user').child('aravinth').get();
+      console.log(getDetail.val());
+
+      let chat = [];
+      getDetail.forEach(data => {
+        // data.forEach(s => console.log(s));
+
+        chat.push(data.val());
+      });
+      setChatDetail(chat);
+    }
   }, []);
+  async function AddUser() {
+    setModalVisible(!modalVisible);
+    let isEmail = -1;
+    if (chatDetail != null) {
+      console.log(chatDetail);
+      isEmail = chatDetail.findIndex(val => val.email == email);
+
+      //   chatDetail.map(data => {
+      //     console.log(data.email == email);
+
+      //     if (data.email == email) {
+      //       isEmail = true;
+
+      //       // break;
+      //       return;
+      //     }
+      //   });
+      // }
+    }
+    console.log(isEmail);
+    if (isEmail != -1) {
+      alert('Chat already added');
+      console.log('already Email');
+       return;  
+    }
+
+   
+    let newDate = Date.now();
+    await db
+      .ref('user')
+      .child('aravinth')
+      .push({
+        name: email.split('@')[0],
+        email: email,
+        chatId: newDate,
+      });
+    await db.ref('user').child(email.split('@')[0]).push({
+      name: 'aravinth98',
+      email: 'aravinth98@gmail.com',
+      chatId: newDate,
+    });
+    console.log('createdAll');
+  }
 
   return (
     <View style={{flex: 1, width: '100%'}}>
@@ -31,13 +88,14 @@ function Conversation() {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <TextInput
-              style={{border: 2, borderColor: Springgreen}}
+              style={{borderWi: 2, borderColor: Springgreen}}
               placeholder="enter email"
+              onChangeText={setEmail}
             />
             <Pressable
               style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              onPress={() => AddUser()}>
+              <Text style={styles.textStyle}>Add user</Text>
             </Pressable>
           </View>
         </View>
