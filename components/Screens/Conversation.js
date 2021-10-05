@@ -6,11 +6,14 @@ import {
   Text,
   StyleSheet,
   TextInput,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import firebase from '../database/Firebase';
 import {Springgreen} from '../services/Color';
 const db = firebase.database();
-function Conversation() {
+function Conversation({navigation,setChatId,emailId}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [chatDetail, setChatDetail] = useState([]);
   const [email, setEmail] = useState('');
@@ -18,8 +21,8 @@ function Conversation() {
     // await db.ref('user').child('aravinth98').push({name: 'aravinth'});
     // console.log('created');
     if (chatDetail == null || chatDetail.length == 0) {
-      const getDetail = await db.ref('user').child('aravinth').get();
-      console.log(getDetail.val());
+      const getDetail = await db.ref('user').child(emailId.split("@")[0]).get();
+      // console.log(getDetail.val());
 
       let chat = [];
       getDetail.forEach(data => {
@@ -28,6 +31,7 @@ function Conversation() {
         chat.push(data.val());
       });
       setChatDetail(chat);
+      console.log(chat);
     }
   }, []);
   async function AddUser() {
@@ -53,25 +57,36 @@ function Conversation() {
     if (isEmail != -1) {
       alert('Chat already added');
       console.log('already Email');
-       return;  
+      return;
     }
 
-   
     let newDate = Date.now();
     await db
       .ref('user')
-      .child('aravinth')
+      .child(emailId.split("@")[0])
       .push({
         name: email.split('@')[0],
         email: email,
         chatId: newDate,
       });
     await db.ref('user').child(email.split('@')[0]).push({
-      name: 'aravinth98',
-      email: 'aravinth98@gmail.com',
+      name: emailId.split("@")[0],
+      email: emailId,
       chatId: newDate,
     });
-    console.log('createdAll');
+    let tempDetail = [...chatDetail];
+    tempDetail.push({
+      name: email.split("@")[0],
+      email: email,
+      chatId: newDate,
+    });
+    setChatDetail(tempDetail);
+  }
+  function EnterChatScreen(chatId) {
+    console.log(chatId);
+    setChatId(chatId);
+    navigation.navigate("ChatScreen");
+
   }
 
   return (
@@ -115,7 +130,39 @@ function Conversation() {
           Add Chat
         </Text>
       </View>
-      <View style={{flex: 7}}></View>
+      <View style={{flex: 7, backgroundColor: 'white'}}>
+        <FlatList
+          style={{flex: 1}}
+          data={chatDetail}
+          numColumns={1}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              onPress={() => EnterChatScreen(item)}
+              style={{
+                width: '100%',
+                height: 65,
+                backgroundColor: 'whitesmoke',
+                borderBottomWidth: 0.5,
+                borderColor: Springgreen,
+              }}>
+              <Text style={{fontSize: 20, fontWeight: 'bold', margin: 4}}>
+                {item.name}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '900',
+                  margin: 4,
+                  color: 'grey',
+                }}>
+                {item.email}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+
+      {/* </ScrollView> */}
     </View>
   );
 }

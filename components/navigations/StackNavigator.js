@@ -10,6 +10,7 @@ const Stack = createNativeStackNavigator();
 
 function StackNavigator() {
   const [loggedIn, setLogged] = useState(null);
+  const [chatId, setChatId] = useState('');
   function setLogin(email) {
     setLogged(email);
   }
@@ -28,7 +29,20 @@ function StackNavigator() {
       ) : (
         <Stack.Navigator>
           <Stack.Screen name="Conversations" options={{headerShown: false}}>
-            {props => <Conversation {...props} />}
+            {props => (
+              <Conversation
+                {...props}
+                setChatId={setChatId}
+                emailId={loggedIn}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen
+            name="ChatScreen"
+            options={{headerShown: false, headerTitle: chatId}}>
+            {props => (
+              <ChatScreen {...props} chatId={chatId} emailId={loggedIn} />
+            )}
           </Stack.Screen>
         </Stack.Navigator>
       )}
