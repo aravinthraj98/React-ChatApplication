@@ -7,10 +7,12 @@ import {
   View,
   Modal,
   FlatList,
+  Keyboard,
 } from 'react-native';
 import {Springgreen} from '../services/Color';
 import firebase, {database} from './../database/Firebase';
 import {IconFill, IconOutline} from '@ant-design/icons-react-native';
+import {Avatar, Icon} from 'react-native-elements';
 
 // import firebase, {firestore} from 'firebase';
 // import { Firestore } from 'firebase/firestore';
@@ -19,24 +21,35 @@ function ChatScreen({navigation, chatId, emailId}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     if (chatId != null) console.log(chatId);
-
+    let length = 0;
     firebase
       .database()
       .ref('chats')
       .child(chatId.chatId)
       .on('value', snapshot => {
+        length = allMessages.length;
         let messages = [];
         snapshot.forEach(value => {
           messages.push(value.val());
         });
         // console.log(snapshot.val());
-        console.log(messages);
-        // console.log(allMessages);
+        console.log(messages.length + ' ' + length);
+        if (length == 0) setAllMessages(messages);
+        else setAllMessages([...allMessages, messages[messages.length - 1]]);
 
-        setAllMessages(messages);
+        // setRefresh(false);
+        // let mess = JSON.parse(JSON.stringify(allMessages));
+        // if (allMessages.length == 0) setAllMessages(messages);
+        // else {
+        //   if (messages[messages.length - 1].sender != emailId.split('@')[0])
+        //     setAllMessages([...allMessages, messages[messages.length - 1]]);
+        // }
+
+        // setAllMessages([...allMessages, messages[messages.length - 1]]);
       });
     // console.log(allMessages);
 
@@ -63,7 +76,7 @@ function ChatScreen({navigation, chatId, emailId}) {
     // console.log(text);
   }, []);
   async function sendMessage() {
-    console.log('message added');
+    setRefresh(true);
     await firebase
       .database()
       .ref('chats')
@@ -73,7 +86,13 @@ function ChatScreen({navigation, chatId, emailId}) {
         message: message,
         time: Date.now(),
       });
+
+    Keyboard.dismiss();
+
     setMessage('');
+    // window.scrollBy(10);
+    // window.scrollBy(0, 10);
+
     // setAllMessages([
     //   ...allMessages,
     //   {
@@ -87,19 +106,41 @@ function ChatScreen({navigation, chatId, emailId}) {
     <View style={{flex: 1}}>
       <View
         style={{
-          flex: 1,
+          flex: 0.8,
+          flexDirection: 'row',
           backgroundColor: Springgreen,
-          margin: 10,
-          minHeight: 30,
+          // margin: 10,
+
+          minHeight: 24,
         }}>
-        <Button title={chatId.name} color="black" />
-        <Text>{chatId.email}</Text>
+        {/* <Button title={chatId.name} color="black" /> */}
+        <Avatar
+          rounded
+          titleStyle={{color: Springgreen, fontSize: 20}}
+          title={emailId.split('@')[0].substring(0, 2).toUpperCase()}
+          containerStyle={{backgroundColor: 'white', margin: 7}}
+        />
+        <Text
+          style={{
+            color: 'white',
+            fontSize: 20,
+            textAlign: 'left',
+            margin: 9,
+            fontWeight: 'bold',
+          }}>
+          {chatId.email.split('@')[0].toUpperCase()}
+        </Text>
       </View>
-      <View style={{flex: 6, backgroundColor: 'white'}}>
+      <View style={{flex: 10, backgroundColor: 'white'}}>
         <FlatList
           data={allMessages}
           scrollToOverflowEnabled={true}
-          scrollsToTop={false}
+          style={{paddingBottom: 40, minHeight: 'auto'}}
+          // inverted={true}
+          // inverted={-1}          refreshControl={refresh}
+
+          // contentContainerStyle={{flexDirection: 'column-reverse'}}
+          // initialScrollIndex={allMessages.length - 1}
           // automaticallyAdjustContentInsets={true}
           renderItem={({item}) => {
             // console.log(item);
@@ -163,7 +204,12 @@ function ChatScreen({navigation, chatId, emailId}) {
         />
       </View>
       <View
-        style={{flex: 1, flexDirection: 'row', backgroundColor: Springgreen}}>
+        style={{
+          flex: 1,
+          padding: 20,
+          flexDirection: 'row',
+          backgroundColor: Springgreen,
+        }}>
         <TextInput
           placeholder={'Type message...'}
           value={message}
@@ -182,11 +228,12 @@ function ChatScreen({navigation, chatId, emailId}) {
         <TouchableOpacity onPress={sendMessage} style={{flex: 1}}>
           <Text
             style={{
-              backgroundColor: 'white',
-              color: Springgreen,
+              backgroundColor: Springgreen,
+              color: 'white',
               marginTop: 10,
-              margin: 2,
-              height: 35,
+
+              height: 30,
+
               textAlign: 'center',
               borderRadius: 10,
               alignContent: 'center',
@@ -194,7 +241,12 @@ function ChatScreen({navigation, chatId, emailId}) {
             }}>
             {' '}
             {/* <AiOutlineSend /> */}
-            send
+            <Icon
+              // size={30}
+              name="paper-plane"
+              type="font-awesome"
+              color={'white'}
+            />
           </Text>
         </TouchableOpacity>
       </View>

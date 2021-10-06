@@ -20,6 +20,7 @@ function SignUp({navigation}) {
       const ref = await firebase
         .auth()
         .createUserWithEmailAndPassword(login.email, login.password);
+      alert('sucess,login to continue');
     } catch (error) {
       alert('Error creating account');
     }

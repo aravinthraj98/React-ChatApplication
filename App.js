@@ -31,14 +31,16 @@ import Login from './components/Screens/Login';
 import firebase, {auth} from './components/database/Firebase';
 import SignUp from './components/Screens/SignUp';
 import StackNavigator from './components/navigations/StackNavigator';
-
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 const App = () => {
   return (
     // <ChatScreen />
     // <Conversation />
     // <Login />
     // <SignUp />
-    <StackNavigator />
+    <SafeAreaProvider>
+      <StackNavigator />
+    </SafeAreaProvider>
   );
 };
 

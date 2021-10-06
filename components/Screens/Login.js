@@ -52,6 +52,7 @@ function Login({navigation, SetLog}) {
       <TextInput
         placeholder={'password'}
         onChangeText={text => handleChange('password', text)}
+        secureTextEntry={true}
         style={{
           borderWidth: 2,
           marginTop: 10,

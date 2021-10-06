@@ -12,8 +12,9 @@ import {
 } from 'react-native';
 import firebase from '../database/Firebase';
 import {Springgreen} from '../services/Color';
+import {Avatar, Icon} from 'react-native-elements';
 const db = firebase.database();
-function Conversation({navigation,setChatId,emailId}) {
+function Conversation({navigation, setChatId, emailId}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [chatDetail, setChatDetail] = useState([]);
   const [email, setEmail] = useState('');
@@ -21,7 +22,7 @@ function Conversation({navigation,setChatId,emailId}) {
     // await db.ref('user').child('aravinth98').push({name: 'aravinth'});
     // console.log('created');
     if (chatDetail == null || chatDetail.length == 0) {
-      const getDetail = await db.ref('user').child(emailId.split("@")[0]).get();
+      const getDetail = await db.ref('user').child(emailId.split('@')[0]).get();
       // console.log(getDetail.val());
 
       let chat = [];
@@ -63,20 +64,23 @@ function Conversation({navigation,setChatId,emailId}) {
     let newDate = Date.now();
     await db
       .ref('user')
-      .child(emailId.split("@")[0])
+      .child(emailId.split('@')[0])
       .push({
         name: email.split('@')[0],
         email: email,
         chatId: newDate,
       });
-    await db.ref('user').child(email.split('@')[0]).push({
-      name: emailId.split("@")[0],
-      email: emailId,
-      chatId: newDate,
-    });
+    await db
+      .ref('user')
+      .child(email.split('@')[0])
+      .push({
+        name: emailId.split('@')[0],
+        email: emailId,
+        chatId: newDate,
+      });
     let tempDetail = [...chatDetail];
     tempDetail.push({
-      name: email.split("@")[0],
+      name: email.split('@')[0],
       email: email,
       chatId: newDate,
     });
@@ -85,8 +89,7 @@ function Conversation({navigation,setChatId,emailId}) {
   function EnterChatScreen(chatId) {
     console.log(chatId);
     setChatId(chatId);
-    navigation.navigate("ChatScreen");
-
+    navigation.navigate('ChatScreen');
   }
 
   return (
@@ -115,18 +118,45 @@ function Conversation({navigation,setChatId,emailId}) {
           </View>
         </View>
       </Modal>
-      <View style={{flex: 1, backgroundColor: Springgreen}}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: Springgreen,
+          // alignItems: 'flex-end',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
+        <Icon
+          name="comments"
+          size={34}
+          style={{margin: 2, marginTop: 2, padding: 4}}
+          color="white"
+          type="font-awesome"
+        />
+        <Text
+          style={{
+            fontSize: 35,
+            color: 'white',
+            fontWeight: 'bold',
+            marginLeft: 10,
+          }}>
+          Chat-Free
+        </Text>
         <Text
           style={{
             color: Springgreen,
+            // flex: 11,
             backgroundColor: 'white',
-            width: '17%',
+            width: '35%',
             margin: 40,
-            height: 20,
+            height: 30,
             borderRadius: 20,
+            fontWeight: 'bold',
             textAlign: 'center',
+            flexDirection: 'row',
           }}
           onPress={() => setModalVisible(true)}>
+          <Icon name="user-plus" type="font-awesome" />
           Add Chat
         </Text>
       </View>
@@ -141,21 +171,36 @@ function Conversation({navigation,setChatId,emailId}) {
               style={{
                 width: '100%',
                 height: 65,
-                backgroundColor: 'whitesmoke',
+                backgroundColor: 'white',
                 borderBottomWidth: 0.5,
                 borderColor: Springgreen,
+                flexDirection: 'row',
+                padding: 10,
+                // alignItems: 'flex-end',
               }}>
-              <Text style={{fontSize: 20, fontWeight: 'bold', margin: 4}}>
+              <Avatar
+                rounded
+                size="medium"
+                titleStyle={{color: 'grey', fontWeight: 'bold'}}
+                title={item.name.substring(0, 2).toUpperCase()}
+                containerStyle={{
+                  backgroundColor: 'white',
+                  borderColor: Springgreen,
+                  borderWidth: 1,
+                }}
+              />
+              <Text style={{fontSize: 22, fontWeight: 'bold', marginLeft: 13}}>
                 {item.name}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '900',
-                  margin: 4,
-                  color: 'grey',
-                }}>
-                {item.email}
+                {'\n'}
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '900',
+                    margin: 2,
+                    color: 'grey',
+                  }}>
+                  {item.email}
+                </Text>
               </Text>
             </TouchableOpacity>
           )}
